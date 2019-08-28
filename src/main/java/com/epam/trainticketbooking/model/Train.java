@@ -1,32 +1,36 @@
 package com.epam.trainticketbooking.model;
 
-import java.sql.Date;
+import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "trains")
+@Table(name = "train")
 public class Train {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String source;
 	private String destination;
-	private Date date;
-	private long distance;
-	private int acSeats;
-	private int sleeperSeats;
+	@ElementCollection(fetch = FetchType.LAZY)
+	private List<Station> stations;
 
-	public Train(long id, String source, String destination, Date date, long distance, int acSeats, int sleeperSeats) {
+	@ElementCollection(fetch = FetchType.LAZY)
+	private List<Availability> availability;
+
+	public Train(List<Station> stations, List<Availability> availability, String sourceStation,
+			String destinationStation) {
 		super();
-		this.id = id;
-		this.source = source;
-		this.destination = destination;
-		this.distance = distance;
-		this.acSeats = acSeats;
-		this.sleeperSeats = sleeperSeats;
-		this.date = date;
+		this.availability = availability;
+		this.source = sourceStation;
+		this.destination = destinationStation;
+		this.stations = stations;
 	}
 
 	public Train() {
@@ -41,58 +45,42 @@ public class Train {
 		this.id = id;
 	}
 
+	public List<Availability> getAvailability() {
+		return availability;
+	}
+
+	public void setAvailability(List<Availability> availability) {
+		this.availability = availability;
+	}
+
 	public String getSource() {
 		return source;
 	}
 
-	public void setSource(String source) {
-		this.source = source;
+	public void setSource(String sourceStation) {
+		this.source = sourceStation;
 	}
 
 	public String getDestination() {
 		return destination;
 	}
 
-	public void setDestination(String destination) {
-		this.destination = destination;
+	public void setDestination(String destinationStation) {
+		this.destination = destinationStation;
 	}
 
-	public double getDistance() {
-		return distance;
+	public List<Station> getStations() {
+		return stations;
 	}
 
-	public void setDistance(long distance) {
-		this.distance = distance;
-	}
-
-	public int getAcSeats() {
-		return acSeats;
-	}
-
-	public void setAcSeats(int acSeats) {
-		this.acSeats = acSeats;
-	}
-
-	public int getSleeperSeats() {
-		return sleeperSeats;
-	}
-
-	public void setSleeperSeats(int sleeperSeats) {
-		this.sleeperSeats = sleeperSeats;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
+	public void setStations(List<Station> stations) {
+		this.stations = stations;
 	}
 
 	@Override
 	public String toString() {
-		return "Train [id=" + id + ", source=" + source + ", destination=" + destination + ", distance=" + distance
-				+ ", acSeats=" + acSeats + ", sleeperSeats=" + sleeperSeats + "]";
+		return "Train [id=" + id + ", sourceStation=" + source + ", destinationStation=" + destination
+				+ ", stations=" + stations + ", availability=" + availability + "]";
 	}
 
 }

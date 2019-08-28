@@ -1,35 +1,52 @@
 package com.epam.trainticketbooking.model;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Route {
-	private long sourceId;
-	private long destinationId;
+
+	private String source;
+	private String destination;
 	private long distance;
-	
-	public Route(long sourceId, long destinationId, long distance) {
+
+	public Route(String source, String destination, long distance) {
 		super();
-		this.sourceId = sourceId;
-		this.destinationId = destinationId;
+		this.source = source;
+		this.destination = destination;
 		this.distance = distance;
 	}
-	
-	public long getSourceId() {
-		return sourceId;
+
+	public Route() {
+
 	}
-	public void setSourceId(long sourceId) {
-		this.sourceId = sourceId;
+
+	public String getSource() {
+		return source;
 	}
-	public long getDestinationId() {
-		return destinationId;
+
+	public void setSource(String source) {
+		this.source = source;
 	}
-	public void setDestinationId(long destinationId) {
-		this.destinationId = destinationId;
+
+	public String getDestinationId() {
+		return destination;
 	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+
 	public long getDistance() {
 		return distance;
 	}
+
 	public void setDistance(long distance) {
 		this.distance = distance;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Route [source=" + source + ", destination=" + destination + ", distance=" + distance + "]";
+	}
+
 }

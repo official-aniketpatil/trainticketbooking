@@ -35,7 +35,7 @@ public class TrainController extends HttpServlet {
 		String destination = request.getParameter("destination").trim();
 		String inputDate = request.getParameter("date").trim();
 		Date date = DateConversion.convertToSqlDate(inputDate);
-		TrainService trainService = new TrainService(new TrainDaoImpl(new ConnectionManager()));
+		TrainService trainService = new TrainService(new TrainDaoImpl());
 		List<Train> trains = trainService.findTrains(source, destination, date);
 		request.setAttribute("trainsList", trains);
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("show-trains.jsp");
@@ -65,7 +65,7 @@ public class TrainController extends HttpServlet {
 				passengers.add(passenger);
 			}
 			BookingService bookingService = new BookingService();
-			bookingService.bookTicket(passengers, trainId, seatType, passengerCount, date);
+			//bookingService.bookTicket(passengers, trainId, seatType, passengerCount, date);
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("success.jsp");
 			requestDispatcher.forward(request, response); 
 		} catch (NumberFormatException | ServletException | IOException ex) {

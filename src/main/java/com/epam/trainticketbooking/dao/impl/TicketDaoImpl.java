@@ -21,7 +21,7 @@ import com.epam.trainticketbooking.model.Train;
 public class TicketDaoImpl implements TicketDao {
 	private Logger logger = LogManager.getLogger(TicketDaoImpl.class);
 	private PassengerDao passengerDao = new PassengerDaoImpl(new ConnectionManager());
-	private TrainDao trainDao = new TrainDaoImpl(new ConnectionManager());
+	private TrainDao trainDao = new TrainDaoImpl();
 	private StationDao stationDao = new StationDaoImpl(new ConnectionManager());
 	private ConnectionManager connectionManager;
 	private static final Double AC_FARE = 4.5;
@@ -35,48 +35,10 @@ public class TicketDaoImpl implements TicketDao {
 
 	@Override
 	public synchronized void book(List<Passenger> passengers, Train train, String seatType, int seatCount) {
-		if (checkSeatAvailability(train, seatCount, seatType)) {
-			for (Passenger passenger : passengers) {
-				passenger = passengerDao.add(passenger);
-				long passengerId = passenger.getId();
-				long trainId = train.getId();
-				long sourceId = stationDao.getIdByName(train.getSource());
-				long destinationId = stationDao.getIdByName(train.getDestination());
-				double distance = train.getDistance();
-				Date date = train.getDate();
-
-				try (Connection connection = connectionManager.getDBConnection();
-						PreparedStatement stmt = connection.prepareStatement(ADD_BOOKING);) {
-					stmt.setLong(1, passengerId);
-					stmt.setLong(2, trainId);
-					stmt.setLong(3, sourceId);
-					stmt.setLong(4, destinationId);
-					stmt.setDate(5, date);
-					stmt.setString(6, seatType);
-					double fare = computeFare(distance, seatType);
-					stmt.setDouble(7, fare);
-					stmt.execute();
-				} catch (DBConnectionFailedException | SQLException ex) {
-					logger.error(ex.getMessage());
-				}
-			}
-			updateSeatCount(train, seatType, seatCount);
-			logger.trace("Your booking is confirmed");
-		} else {
-			logger.trace("Seat is/are not available");
-		}
 	}
 
 	private void updateSeatCount(Train train, String seatType, int seatCount) {
-		int acSeats = train.getAcSeats();
-		int sleeperSeats = train.getSleeperSeats();
 
-		if (seatType.equalsIgnoreCase("AC")) {
-			train.setAcSeats(acSeats - seatCount);
-		} else if (seatType.equalsIgnoreCase("SLEEPER")) {
-			train.setSleeperSeats(sleeperSeats - seatCount);
-		}
-		trainDao.updateSeatAvailability(train);
 	}
 
 	private double computeFare(double distance, String seatType) {
@@ -92,10 +54,7 @@ public class TicketDaoImpl implements TicketDao {
 	}
 
 	private boolean checkSeatAvailability(Train train, int seatCount, String seatType) {
-		if (seatType.equalsIgnoreCase("AC")) {
-			return train.getAcSeats() >= seatCount;
-		}
-		return train.getSleeperSeats() >= seatCount;
+		return false;
 	}
 
 }

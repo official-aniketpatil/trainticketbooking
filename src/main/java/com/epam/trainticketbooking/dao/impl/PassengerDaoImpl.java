@@ -29,18 +29,7 @@ public class PassengerDaoImpl implements PassengerDao {
 
 	@Override
 	public Passenger add(Passenger passenger) {
-		try (Connection connection = connectionManager.getDBConnection();
-				PreparedStatement statement = connection.prepareStatement(ADD_PASSENGER);) {
-			statement.setString(1, passenger.getName());
-			statement.setString(2, passenger.getGender());
-			statement.setString(3, passenger.getMobile());
-			statement.execute();
-			passenger.setId(getLastAddedPassengerId());
-			return passenger;
-		} catch (DBConnectionFailedException | SQLException | NullPointerException ex) {
-			logger.error(ex.getMessage());
-			throw new DataWriteException("Unable to add Passenger");
-		}
+		return null;
 	}
 
 	@Override
@@ -55,7 +44,7 @@ public class PassengerDaoImpl implements PassengerDao {
 				String name = resultSet.getString("name");
 				String gender = resultSet.getString("gender");
 				String mobile = resultSet.getString("mobile");
-				passenger = new Passenger(id, name, gender, mobile);
+				passenger = new Passenger(name, gender, mobile);
 			}
 			return passenger;
 		} catch (DBConnectionFailedException | SQLException ex) {

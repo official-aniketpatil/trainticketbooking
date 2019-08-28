@@ -13,4 +13,5 @@ public interface TrainDao {
 	public boolean checkAvailability(long trainId,Date date);
 	public Map<String,Integer> getAvailableSeats(long trainId,Date date);
 	public void updateSeatAvailability(Train train);
+	public Train save(Train train);
 }
