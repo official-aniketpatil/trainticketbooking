@@ -8,11 +8,10 @@ import java.util.stream.Collectors;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.epam.trainticketbooking.connection.ConnectionManager;
 import com.epam.trainticketbooking.dao.impl.TrainDaoImpl;
+import com.epam.trainticketbooking.helper.BookingDetail;
 import com.epam.trainticketbooking.model.Availability;
 import com.epam.trainticketbooking.model.Passenger;
-import com.epam.trainticketbooking.model.Route;
 import com.epam.trainticketbooking.model.Station;
 import com.epam.trainticketbooking.model.Train;
 import com.epam.trainticketbooking.services.BookingService;
@@ -25,7 +24,7 @@ public class ApplicationStarter {
 	private static final int BOOK_TRAIN = 2;
 
 	public static void main(String[] args) {
-		TrainService trainService = new TrainService(new TrainDaoImpl());
+		TrainService trainService = new TrainService();
 		BookingService bookingService = new BookingService();
 		ConsoleOperations.showServiceMenu();
 		int choice = ConsoleOperations.getInt();
@@ -52,23 +51,24 @@ public class ApplicationStarter {
 			for(int i = 0; i < seatCount; i++) {
 				passengers.add(ConsoleOperations.getPassenger());
 			}
-			Train train = trains.stream().filter(t->t.getId() == trainId).collect(Collectors.toList()).get(0);
-			bookingService.bookTicket(passengers, train, seatType, seatCount);
+			BookingDetail bookingDetail = new BookingDetail(passengers, source, destination, date, seatType, seatCount, trainId);
+			bookingService.bookTicket(bookingDetail);
 		} else {
 			logger.error("Enter a valid choice");
-//			Train train = new Train(new ArrayList<Station>(), new ArrayList<Availability>(),"chennai","bhopal");
-//			Availability dayOne = new Availability(DateConversion.convertToSqlDate("11-11-2011"), 10, 10);
-//			Availability dayTwo = new Availability(DateConversion.convertToSqlDate("12-11-2011"), 10, 10);
-//			Station s1 = new Station("hyderabad", 2);
-//			Station s2 = new Station("pune", 4);
-//			Station s3 = new Station("bhopal", 10);
-//			train.getAvailability().add(dayOne);
-//			train.getAvailability().add(dayTwo);
-//			train.getStations().add(s1);
-//			train.getStations().add(s2);
-//			train.getStations().add(s3);
-//			new TrainDaoImpl().save(train);
-			new TrainDaoImpl().searchTrains("pune", "bhopal", DateConversion.convertToSqlDate("11-11-2011"));
+			Availability dayOne = new Availability(DateConversion.convertToSqlDate("11-11-2011"), 10, 10);
+			Availability dayTwo = new Availability(DateConversion.convertToSqlDate("12-11-2011"), 10, 10);
+			//Station s0 = new Station("chennai", 0);
+			Station s1 = new Station("hyderabad", 0);
+			Station s2 = new Station("pune", 500);
+			Station s3 = new Station("bhopal", 900);
+			Train train = new Train(new ArrayList<Station>(), new ArrayList<Availability>(), "hyderabad", "bhopal");
+			train.getAvailability().add(dayOne);
+			train.getAvailability().add(dayTwo);
+			//train.getStations().add(s0);
+			train.getStations().add(s1);
+			train.getStations().add(s2);
+			train.getStations().add(s3);
+			new TrainDaoImpl().save(train);
 		}
 
 	}

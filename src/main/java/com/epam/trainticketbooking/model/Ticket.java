@@ -11,22 +11,21 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-class Ticket {
+public class Ticket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private double fare;
 	private String source;
 	private String destination;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
 	private Train train;
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	private List<Passenger> passengers;
 
-	public Ticket(long id, double fare,String source, String destination, List<Passenger> passengers, Train train) {
+	public Ticket(String source, String destination, List<Passenger> passengers, Train train, double fare) {
 		super();
-		this.id = id;
 		this.fare = fare;
 		this.passengers = passengers;
 		this.train = train;
@@ -57,11 +56,7 @@ class Ticket {
 	public long getId() {
 		return id;
 	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
+	
 	public double getFare() {
 		return fare;
 	}
@@ -84,5 +79,11 @@ class Ticket {
 
 	public void setDestination(String destination) {
 		this.destination = destination;
+	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", fare=" + fare + ", source=" + source + ", destination=" + destination
+				+ ", train=" + train + ", passengers=" + passengers + "]";
 	}
 }

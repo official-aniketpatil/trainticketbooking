@@ -19,7 +19,7 @@ public interface TrainDao {
 
 	public Map<String, Integer> getAvailableSeats(long trainId, Date date);
 
-	public void updateSeatAvailability(Train train);
-
 	public Train save(Train train);
+	
+	public Train update(Train train);
 }

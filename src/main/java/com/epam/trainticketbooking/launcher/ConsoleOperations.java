@@ -10,6 +10,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.epam.trainticketbooking.model.Passenger;
+import com.epam.trainticketbooking.utility.DateConversion;
 
 public class ConsoleOperations {
 	private static Logger logger = LogManager.getLogger(ConsoleOperations.class);
@@ -65,15 +66,7 @@ public class ConsoleOperations {
 	}
 	
 	public static Date getDate() {
-		Date date = null;
-		java.util.Date utilDate = null;
-		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-		try {
-			utilDate= format.parse(scanner.next().trim());
-			date = new Date(utilDate.getTime());
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-		}
+		Date date = DateConversion.convertToSqlDate(scanner.next().trim());
 		return date;
 	}
 	public static Passenger getPassenger() {

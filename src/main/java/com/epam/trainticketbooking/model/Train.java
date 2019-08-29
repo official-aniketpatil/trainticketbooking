@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "train")
@@ -19,10 +21,17 @@ public class Train {
 	private long id;
 	private String source;
 	private String destination;
-	@ElementCollection(fetch = FetchType.LAZY)
+	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ElementCollection
 	private List<Station> stations;
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(mappedBy = "train")
+	private List<Ticket> tickets;
+
+	@ElementCollection 
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Availability> availability;
 
 	public Train(List<Station> stations, List<Availability> availability, String sourceStation,
@@ -76,6 +85,14 @@ public class Train {
 
 	public void setStations(List<Station> stations) {
 		this.stations = stations;
+	}
+
+	public List<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
 	}
 
 	@Override

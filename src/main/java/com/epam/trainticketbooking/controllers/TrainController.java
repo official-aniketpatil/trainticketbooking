@@ -35,7 +35,7 @@ public class TrainController extends HttpServlet {
 		String destination = request.getParameter("destination").trim();
 		String inputDate = request.getParameter("date").trim();
 		Date date = DateConversion.convertToSqlDate(inputDate);
-		TrainService trainService = new TrainService(new TrainDaoImpl());
+		TrainService trainService = new TrainService();
 		List<Train> trains = trainService.findTrains(source, destination, date);
 		request.setAttribute("trainsList", trains);
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("show-trains.jsp");
