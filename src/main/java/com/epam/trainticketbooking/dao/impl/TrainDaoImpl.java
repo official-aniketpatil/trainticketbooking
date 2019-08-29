@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -17,36 +18,27 @@ import com.epam.trainticketbooking.connection.ConnectionManager;
 import com.epam.trainticketbooking.dao.RouteDao;
 import com.epam.trainticketbooking.dao.StationDao;
 import com.epam.trainticketbooking.dao.TrainDao;
+import com.epam.trainticketbooking.model.Availability;
+import com.epam.trainticketbooking.model.Station;
 import com.epam.trainticketbooking.model.Train;
 
 public class TrainDaoImpl implements TrainDao {
 	private static Logger logger = LogManager.getLogger(TrainDaoImpl.class);
-	private StationDao stationDao = new StationDaoImpl(new ConnectionManager());
-	private RouteDao routeDao = new RouteDaoImpl(new ConnectionManager());
-	private static final String FAILED_CONNECTION_MESSAGE = "connection to database failed";
-	private static final String SET_TRAIN_ID_AND_DATE = "where train_id = ? and date = ?";
-	private static final String GET_BY_LOCATION = "select train_id from routes "
-			+ "where station_id = ? and train_id in "
-			+ "(select train_id from routes where station_id = ?)";
-	private static final String GET_BY_ID = "select * from trains where id = ?";
-	private static final String GET_AVAILABLE_SEATS = "select ac_seats,sleeper_seats "
-			+ "from availability "
-			+ SET_TRAIN_ID_AND_DATE;
-	private static final String CHECK_AVAILABILITY = "select * from availability "
-			+ SET_TRAIN_ID_AND_DATE;
-	private static final String UPDATE_AVAILABLE_SEATS = "update availability "
-			+ "set ac_seats = ?, sleeper_seats = ? "
-			+ SET_TRAIN_ID_AND_DATE;
-	private ConnectionManager connectionManager;
-	
+
+	private static final String GET_ALL_TRAINS = "select train from Train train";
+	private static final String GET_BY_LOCATION = "select train from Train train " + "JOIN train.stations s "
+			+ "JOIN train.availability a " + "where s.name = :source and train.id "
+			+ "in(select train.id from Train train "
+			+ "JOIN train.stations s where s.name = :destination) and a.date = :date";
+
 	private EntityManagerFactory emf;
 	private EntityManager em;
-	
+
 	public TrainDaoImpl() {
 		emf = Persistence.createEntityManagerFactory("local-mysql");
 		em = emf.createEntityManager();
 	}
-	
+
 	@Override
 	public Train save(Train train) {
 		em.getTransaction().begin();
@@ -55,6 +47,7 @@ public class TrainDaoImpl implements TrainDao {
 		em.close();
 		return train;
 	}
+
 	@Override
 	public Train getById(long id) {
 		em.getTransaction().begin();
@@ -63,25 +56,50 @@ public class TrainDaoImpl implements TrainDao {
 		em.close();
 		return train;
 	}
+
 	private long computeDistance(long trainId, long sourceId, long destinationId) {
-		long distanceToSource = routeDao.getStationDistanceByTrainId(trainId, sourceId);
-		long distanceToDestination = routeDao.getStationDistanceByTrainId(trainId, destinationId);
-		
-		return distanceToDestination - distanceToSource;
+
+		return 0;
 	}
 
 	@Override
 	public List<Train> getByLocation(String source, String destination) {
-		return null;
+		Query query = em.createQuery(GET_BY_LOCATION);
+		query.setParameter("source", "hyderabad");
+		query.setParameter("destination", "bhopal");
+		List<Train> trains = query.getResultList();
+		return trains;
+	}
+
+	@Override
+	public List<Train> searchTrains(String source, String destination, Date date) {
+		Query query = em.createQuery(GET_BY_LOCATION);
+		query.setParameter("source", source);
+		query.setParameter("destination", destination);
+		query.setParameter("date", date);
+		List<Train> trains = query.getResultList();
+		logger.trace(trains.toString());
+		return trains;
 	}
 
 	@Override
 	public List<Train> getAll() {
-		return Collections.emptyList();
+		em.getTransaction().begin();
+		Query query = em.createQuery(GET_ALL_TRAINS);
+		List<Train> trains = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		return trains;
 	}
 
 	@Override
-	public boolean checkAvailability(long trainId, Date date) {
+	public boolean checkAvailability(Train train, Date date) {
+		List<Availability> availabilities = train.getAvailability();
+		for (Availability availability : availabilities) {
+			if (availability.getDate().equals(date)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -92,6 +110,6 @@ public class TrainDaoImpl implements TrainDao {
 
 	@Override
 	public void updateSeatAvailability(Train train) {
-	
+
 	}
 }

@@ -35,6 +35,7 @@ public class TicketDaoImpl implements TicketDao {
 
 	@Override
 	public synchronized void book(List<Passenger> passengers, Train train, String seatType, int seatCount) {
+	
 	}
 
 	private void updateSeatCount(Train train, String seatType, int seatCount) {
