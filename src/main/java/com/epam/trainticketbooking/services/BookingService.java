@@ -28,7 +28,6 @@ public class BookingService {
 	public synchronized void bookTicket(BookingDetail bookingDetail) {
 		long trainId = bookingDetail.getTrainId();
 		Train train = trainDao.getById(trainId);
-		bookingDetail.setTrain(train);
 		String seatType = bookingDetail.getSeatType();
 		String source = bookingDetail.getSource();
 		String destination = bookingDetail.getDestination();

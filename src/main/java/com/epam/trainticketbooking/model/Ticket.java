@@ -18,6 +18,7 @@ public class Ticket {
 	private double fare;
 	private String source;
 	private String destination;
+	
     @ManyToOne(fetch = FetchType.LAZY)
 	private Train train;
 

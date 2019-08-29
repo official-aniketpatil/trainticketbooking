@@ -2,6 +2,9 @@ package com.epam.trainticketbooking.dao.impl;
 
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.epam.trainticketbooking.dao.TicketDao;
 import com.epam.trainticketbooking.dao.TrainDao;
 import com.epam.trainticketbooking.helper.BookingDetail;
@@ -11,6 +14,7 @@ import com.epam.trainticketbooking.model.Train;
 
 public class TicketDaoImpl implements TicketDao {
 	private TrainDao trainDao = new TrainDaoImpl();
+	private Logger logger = LogManager.getLogger(TicketDao.class);
 	
 	@Override
 	public synchronized Ticket book(BookingDetail bookingDetail) {

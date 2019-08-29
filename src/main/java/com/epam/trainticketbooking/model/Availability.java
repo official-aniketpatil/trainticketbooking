@@ -12,11 +12,13 @@ public class Availability {
 
 	public Availability() {
 	}
+
 	public Availability(Date date, int acSeats, int sleeperSeats) {
 		this.date = date;
 		this.acSeats = acSeats;
 		this.sleeperSeats = sleeperSeats;
 	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -40,4 +42,10 @@ public class Availability {
 	public void setSleeperSeats(int sleeperSeats) {
 		this.sleeperSeats = sleeperSeats;
 	}
+
+	@Override
+	public String toString() {
+		return "Availability [date=" + date + ", acSeats=" + acSeats + ", sleeperSeats=" + sleeperSeats + "]";
+	}
+
 }

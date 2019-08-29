@@ -2,6 +2,7 @@ package com.epam.trainticketbooking.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class Train {
 	private List<Station> stations;
 
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@OneToMany(mappedBy = "train")
+	@OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
 	private List<Ticket> tickets;
 
 	@ElementCollection 
@@ -97,8 +98,7 @@ public class Train {
 
 	@Override
 	public String toString() {
-		return "Train [id=" + id + ", sourceStation=" + source + ", destinationStation=" + destination + ", stations="
-				+ stations + ", availability=" + availability + "]";
+		return "Train [id=" + id + ", source=" + source + ", destination=" + destination + ", stations=" + stations
+				+ ", tickets=" + tickets + ", availability=" + availability + "]";
 	}
-
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
@@ -31,54 +32,63 @@ public class TrainDaoImpl implements TrainDao {
 
 	private EntityManagerFactory emf;
 	private EntityManager em;
+	private EntityTransaction tx;
 
 	public TrainDaoImpl() {
-		emf = Persistence.createEntityManagerFactory("local-mysql");
-		em = emf.createEntityManager();
 	}
 
 	@Override
 	public Train save(Train train) {
-		try {
-			em.getTransaction().begin();
+		emf = Persistence.createEntityManagerFactory("local-mysql");
+		em = emf.createEntityManager();
+		tx = em.getTransaction();
+		try {	
+			tx.begin();
 			em.persist(train);
-			em.getTransaction().commit();
+			tx.commit();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			em.getTransaction().rollback();
+			tx.rollback();
+		} finally {
+			em.close();
+			emf.close();
 		}
 		return train;
 	}
 
 	@Override
 	public Train update(Train train) {
-		try {
-			em.getTransaction().begin();
-			Train savedTrain = em.find(Train.class, train.getId());
-			savedTrain.setAvailability(train.getAvailability());
-			savedTrain.setTickets(train.getTickets());
-			em.getTransaction().commit();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			em.getTransaction().rollback();
-		}
+		emf = Persistence.createEntityManagerFactory("local-mysql");
+		em = emf.createEntityManager();
+		tx = em.getTransaction();
+		tx.begin();
+		Train savedTrain = em.find(Train.class, train.getId());
+		savedTrain.setAvailability(train.getAvailability());
+		savedTrain.setTickets(train.getTickets());
+		tx.commit();
+		em.close();
+		emf.close();
 		return train;
 	}
 
 	@Override
 	public Train getById(long id) {
-		em.getTransaction().begin();
+		emf = Persistence.createEntityManagerFactory("local-mysql");
+		em = emf.createEntityManager();
+		tx = em.getTransaction();
+		tx.begin();
 		Train train = em.find(Train.class, id);
-		em.getTransaction().commit();
+		tx.commit();
 		em.close();
+		emf.close();
 		return train;
 	}
 
 	@Override
 	public List<Train> getByLocation(String source, String destination) {
 		Query query = em.createQuery(GET_BY_LOCATION);
-		query.setParameter("source", "hyderabad");
-		query.setParameter("destination", "bhopal");
+		query.setParameter("source", source);
+		query.setParameter("destination", destination);
 		@SuppressWarnings("unchecked")
 		List<Train> trains = query.getResultList();
 		return trains;
@@ -86,40 +96,47 @@ public class TrainDaoImpl implements TrainDao {
 
 	@Override
 	public List<Train> searchTrains(String source, String destination, Date date) {
+		emf = Persistence.createEntityManagerFactory("local-mysql");
+		em = emf.createEntityManager();
+		tx = em.getTransaction();
+		tx.begin();
 		Query query = em.createQuery(GET_BY_LOCATION_AND_DATE);
 		query.setParameter("source", source);
 		query.setParameter("destination", destination);
 		query.setParameter("date", date);
 		@SuppressWarnings("unchecked")
 		List<Train> trains = query.getResultList();
+		tx.commit();
+		em.close();
+		emf.close();
 		return trains;
 	}
 
 	@Override
 	public List<Train> getAll() {
-		em.getTransaction().begin();
+		tx.begin();
 		Query query = em.createQuery(GET_ALL_TRAINS);
 		@SuppressWarnings("unchecked")
 		List<Train> trains = query.getResultList();
-		em.getTransaction().commit();
-		em.close();
+		tx.commit();
 		return trains;
 	}
 
 	@Override
 	public boolean checkAvailability(Train train, Date date) {
+		boolean flag = false;
 		List<Availability> availabilities = train.getAvailability();
 		for (Availability availability : availabilities) {
 			if (availability.getDate().equals(date)) {
-				return true;
+				flag = true;
 			}
 		}
-		return false;
+		return flag;
 	}
 
 	@Override
 	public Map<String, Integer> getAvailableSeats(long trainId, Date date) {
 		return null;
 	}
-	
+
 }
