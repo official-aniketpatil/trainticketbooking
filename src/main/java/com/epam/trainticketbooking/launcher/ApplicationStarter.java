@@ -13,6 +13,7 @@ import com.epam.trainticketbooking.helper.BookingDetail;
 import com.epam.trainticketbooking.model.Availability;
 import com.epam.trainticketbooking.model.Passenger;
 import com.epam.trainticketbooking.model.Station;
+import com.epam.trainticketbooking.model.Ticket;
 import com.epam.trainticketbooking.model.Train;
 import com.epam.trainticketbooking.services.BookingService;
 import com.epam.trainticketbooking.services.TrainService;
@@ -62,6 +63,7 @@ public class ApplicationStarter {
 			Station s2 = new Station("pune", 500);
 			Station s3 = new Station("bhopal", 900);
 			Train train = new Train(new ArrayList<Station>(), new ArrayList<Availability>(), "hyderabad", "bhopal");
+			train.setTickets(new ArrayList<Ticket>());
 			train.getAvailability().add(dayOne);
 			train.getAvailability().add(dayTwo);
 			//train.getStations().add(s0);

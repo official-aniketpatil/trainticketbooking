@@ -38,6 +38,7 @@ public class BookingService {
 			long distance = computeDistanceBetweenStations(train, source, destination);
 			double fare = computeFare(distance, seatType);
 			bookingDetail.setFare(fare);
+			bookingDetail.setTrain(train);
 			ticketDao.book(bookingDetail);
 		} else {
 			logger.info("Train is not available");
@@ -76,6 +77,7 @@ public class BookingService {
 				}
 			}
 		}
+		train.setAvailability(availabilities);
 	}
 
 	private double computeFare(long distance, String seatType) {

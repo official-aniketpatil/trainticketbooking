@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -20,6 +21,7 @@ public class Ticket {
 	private String destination;
 	
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "train_id")
 	private Train train;
 
 	@ElementCollection(fetch = FetchType.LAZY)
@@ -80,11 +82,5 @@ public class Ticket {
 
 	public void setDestination(String destination) {
 		this.destination = destination;
-	}
-
-	@Override
-	public String toString() {
-		return "Ticket [id=" + id + ", fare=" + fare + ", source=" + source + ", destination=" + destination
-				+ ", train=" + train + ", passengers=" + passengers + "]";
 	}
 }

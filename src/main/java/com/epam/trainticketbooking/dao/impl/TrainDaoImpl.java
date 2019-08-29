@@ -24,11 +24,11 @@ public class TrainDaoImpl implements TrainDao {
 	private static final String GET_BY_LOCATION = "select train from Train train " + "JOIN train.stations s "
 			+ "JOIN train.availability a " + "where s.name = :source and train.id "
 			+ "in(select train.id from Train train " + "JOIN train.stations s where s.name = :destination)";
-
+	
 	private static final String GET_BY_LOCATION_AND_DATE = "select train from Train train " + "JOIN train.stations s "
 			+ "JOIN train.availability a " + "where s.name = :source and train.id "
-			+ "in(select train.id from Train train "
-			+ "JOIN train.stations s where s.name = :destination) and a.date = :date";
+			+ "in(select train1.id from Train train1 "
+			+ "JOIN train1.stations s1 where s1.name = :destination) and a.date = :date";
 
 	private EntityManagerFactory emf;
 	private EntityManager em;

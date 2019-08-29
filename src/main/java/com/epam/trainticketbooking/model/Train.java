@@ -15,7 +15,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
-@Table(name = "train")
 public class Train {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,7 +27,7 @@ public class Train {
 	private List<Station> stations;
 
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "train")
 	private List<Ticket> tickets;
 
 	@ElementCollection 
